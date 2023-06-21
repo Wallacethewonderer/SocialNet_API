@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+const { Schema, model, Types } = require('mongoose');
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
   {
     username: {
       type: String,
@@ -12,29 +12,29 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      validate: {
-        validator: function (value) {
-          // Regular expression to validate email format
-          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        },
-        message: 'Invalid email format',
-      },
+      match: 
+      [
+        /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,
+       'Please enter a valid e-mail address, dont use uppercase letters!'
+      ],
     },
     thoughts: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Thought',
       },
     ],
     friends: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User',
       },
     ],
   },
   {
-    toJSON: { virtuals: true },
+    toJSON: { 
+      virtuals: true 
+    },
     id: false,
   }
 );
@@ -43,6 +43,6 @@ userSchema.virtual('friendCount').get(function () {
   return this.friends.length;
 });
 
-const User = mongoose.model('User', userSchema);
+const User = model('User', userSchema);
 
 module.exports = User;
