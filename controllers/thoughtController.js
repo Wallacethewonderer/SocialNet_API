@@ -27,21 +27,22 @@ module.exports = {
   //createThought
     createThought(req, res) {
         Thought.create(req.body)
-          .then(({ _id }) => {
-            return User.findOneAndUpdate(
-              { _id: req.body.userId },
-              { $push: { thoughts: _id } },
-              { new: true }
-            );
-          })
-          .then((thoughtData) => {
-            if (!thoughtData) {
-                res.status(404).json({ message: 'No thought found with this id!' });
-                return;
-            }
-            res.json(thoughtData);
-        })
-      .catch((err) => res.status(500).json(err));
+            .then(thoughtData => {
+                User.findOneAndUpdate(
+                    { username: req.body.username },
+                    { $push: { thoughts: thoughtData._id } },
+                    { new: true }
+                )
+                    .then(userData => {
+                        if (!userData) {
+                            res.status(404).json({ message: 'Thought created, but no user found!' });
+                            return;
+                        }
+                        res.json(thoughtData);
+                    })
+                    .catch(err => res.status(500).json(err));
+            })
+            .catch
   },
 
   //updateThought
@@ -92,7 +93,7 @@ module.exports = {
   //createReaction
     createReaction(req, res) {
         Thought.findOneAndUpdate(
-            { _id: req.params.thoughtId },
+            { _id: req.body.thoughtId },
             { $addToSet: { reactions: req.body } },
             { runValidators: true, new: true }
         )
@@ -124,3 +125,4 @@ module.exports = {
             .catch(err => res.status(500).json(err));
     }
 };
+

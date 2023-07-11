@@ -6,7 +6,7 @@
 ## Description
 
 An API for Social-Network-Backend which use mongoose to interact with a MongoDB database.
-
+It has the CRUD(create, read, update, and delete) functions for users and thoughts, and also has the ability to add and remove friends from a user's friend list.
 ## Table of Contents
 
 - [Installation](##installation)
